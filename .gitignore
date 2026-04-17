@@ -1,0 +1,30 @@
+.DS_Store
+.idea/
+.vscode/
+
+# Node
+**/node_modules/
+**/.next/
+**/out/
+**/dist/
+**/.turbo/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pnpm-debug.log*
+
+# Python / Django
+**/__pycache__/
+**/*.py[cod]
+**/*.sqlite3
+**/.pytest_cache/
+**/.mypy_cache/
+**/.ruff_cache/
+backend/.venv/
+backend/staticfiles/
+
+# Env files
+.env
+.env.*
+!.env.example
+
