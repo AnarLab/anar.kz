@@ -130,6 +130,14 @@ STATIC_ROOT = BASE_DIR / "staticfiles"
 # CORS (frontend dev/proxy)
 CORS_ALLOWED_ORIGINS = [o for o in os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:8080,http://localhost:3000").split(",") if o]
 
+# CSRF (for session-auth / admin / forms behind reverse proxy)
+# Django expects full scheme+host origins here (e.g. http://localhost:8080)
+CSRF_TRUSTED_ORIGINS = [
+    o
+    for o in os.environ.get("CSRF_TRUSTED_ORIGINS", ",".join(CORS_ALLOWED_ORIGINS)).split(",")
+    if o
+]
+
 REST_FRAMEWORK = {
     "DEFAULT_AUTHENTICATION_CLASSES": [],
     "DEFAULT_PERMISSION_CLASSES": [],
