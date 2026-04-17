@@ -12,6 +12,9 @@ RUN pip install --no-cache-dir -r requirements.txt
 
 COPY . .
 
+# Collect static assets (admin, etc.) into STATIC_ROOT
+RUN python manage.py collectstatic --noinput
+
 EXPOSE 8000
 
 CMD ["gunicorn", "config.wsgi:application", "--bind", "0.0.0.0:8000", "--workers", "2", "--timeout", "60"]
