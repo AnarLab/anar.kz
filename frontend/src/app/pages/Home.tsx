@@ -6,8 +6,30 @@ import { ImageWithFallback } from "../components/figma/ImageWithFallback";
 import { AnimatedCounter } from "../components/AnimatedCounter";
 import { Testimonials } from "../components/Testimonials";
 import { motion } from "motion/react";
+import { useEffect, useState } from "react";
+import { getPages, type CmsPage } from "../../lib/api";
 
 export function Home() {
+  const [pages, setPages] = useState<CmsPage[] | null>(null);
+  const [pagesError, setPagesError] = useState<string | null>(null);
+
+  useEffect(() => {
+    const ac = new AbortController();
+
+    getPages(ac.signal)
+      .then((data) => {
+        setPages(data);
+        setPagesError(null);
+      })
+      .catch((e: unknown) => {
+        if (e instanceof DOMException && e.name === "AbortError") return;
+        setPages(null);
+        setPagesError(e instanceof Error ? e.message : "Failed to load pages");
+      });
+
+    return () => ac.abort();
+  }, []);
+
   const services = [
     {
       icon: Code,
@@ -138,6 +160,47 @@ export function Home() {
               );
             })}
           </div>
+        </div>
+      </section>
+
+      {/* CMS Pages (from backend) */}
+      <section className="py-16 bg-gray-50 border-t">
+        <div className="mx-auto max-w-7xl px-4 sm:px-6 lg:px-8">
+          <div className="flex items-end justify-between gap-6 mb-8">
+            <div>
+              <h2 className="text-2xl md:text-3xl mb-2">Content from CMS</h2>
+              <p className="text-gray-600">Loaded from Django REST API via `/api/pages/`.</p>
+            </div>
+            <Link href="/admin" className="text-blue-600 hover:underline">
+              Open admin
+            </Link>
+          </div>
+
+          {pagesError ? (
+            <div className="rounded-lg border bg-white p-4 text-sm text-red-600">
+              {pagesError}
+            </div>
+          ) : pages === null ? (
+            <div className="rounded-lg border bg-white p-4 text-sm text-gray-600">Loading…</div>
+          ) : pages.length === 0 ? (
+            <div className="rounded-lg border bg-white p-4 text-sm text-gray-600">
+              No pages yet. Create one in admin and refresh.
+            </div>
+          ) : (
+            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              {pages.map((p) => (
+                <div key={p.slug} className="rounded-lg border bg-white p-6">
+                  <div className="text-xs text-gray-500 mb-2">{p.slug}</div>
+                  <div className="text-lg mb-2">{p.title}</div>
+                  {p.description ? (
+                    <div className="text-sm text-gray-600">{p.description}</div>
+                  ) : (
+                    <div className="text-sm text-gray-500">No description</div>
+                  )}
+                </div>
+              ))}
+            </div>
+          )}
         </div>
       </section>
 

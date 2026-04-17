@@ -127,6 +127,10 @@ STATIC_URL = 'static/'
 
 STATIC_ROOT = BASE_DIR / "staticfiles"
 
+# User uploads
+MEDIA_URL = os.environ.get("DJANGO_MEDIA_URL", "/media/")
+MEDIA_ROOT = Path(os.environ.get("DJANGO_MEDIA_ROOT", str(BASE_DIR / "media")))
+
 # CORS (frontend dev/proxy)
 CORS_ALLOWED_ORIGINS = [o for o in os.environ.get("CORS_ALLOWED_ORIGINS", "http://localhost:8080,http://localhost:3000").split(",") if o]
 
